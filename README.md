@@ -13,16 +13,20 @@ is a developer compile-time artifact and is not the Nexori runtime plugin.
 Use this artifact as `compileOnly`.
 
 ```gradle
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}
+
 dependencies {
-    compileOnly "io.github.hyjn:nexori-api:2.3.0"
+    compileOnly "com.github.hyjn-nexori:nexori-api:v2.4.0"
 }
 ```
 
-For local development before publishing:
+For local development against a checked-out copy:
 
 ```gradle
 dependencies {
-    compileOnly files("../nexori-api/build/libs/nexori-api-2.3.0.jar")
+    compileOnly files("../nexori-api/build/libs/nexori-api-2.4.0.jar")
 }
 ```
 
