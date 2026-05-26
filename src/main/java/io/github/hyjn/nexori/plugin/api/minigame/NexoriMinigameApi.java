@@ -123,6 +123,23 @@ public interface NexoriMinigameApi {
     }
 
     /**
+     * Returns the backend AFK continuation decision for one active match.
+     *
+     * <p>Returns {@link NexoriAfkContinuationDecisionType#PENDING} while a backend check is in
+     * flight, {@link NexoriAfkContinuationDecisionType#CONTINUE} or
+     * {@link NexoriAfkContinuationDecisionType#CANCEL} once the backend responds, or
+     * {@link NexoriAfkContinuationDecisionType#UNAVAILABLE} if the feature is disabled,
+     * the backend is not configured, or the most recent request failed.</p>
+     *
+     * <p>A {@link NexoriAfkContinuationDecisionType#CANCEL} decision is sticky for the match
+     * lifetime: subsequent backend {@code CONTINUE} responses do not overwrite it.</p>
+     */
+    @Nonnull
+    default NexoriAfkContinuationDecision getAfkContinuationDecision(@Nonnull String matchId) {
+        return NexoriAfkContinuationDecision.unavailable(matchId == null ? "" : matchId);
+    }
+
+    /**
      * Finds the currently active Nexori match id for one player UUID.
      */
     @Nonnull
