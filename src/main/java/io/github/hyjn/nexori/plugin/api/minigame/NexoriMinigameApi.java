@@ -20,6 +20,18 @@ public interface NexoriMinigameApi {
     );
 
     /**
+     * Registers a listener for Nexori AFK activity callbacks for one rules engine id.
+     */
+    @Nonnull
+    default NexoriListenerRegistration registerAfkActivityListener(
+        @Nonnull String rulesEngineId,
+        @Nonnull NexoriAfkActivityListener listener
+    ) {
+        return () -> {
+        };
+    }
+
+    /**
      * Finds the currently active Nexori match id for one player UUID.
      */
     @Nonnull
