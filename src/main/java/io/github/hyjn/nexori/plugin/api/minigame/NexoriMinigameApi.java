@@ -32,6 +32,69 @@ public interface NexoriMinigameApi {
     }
 
     /**
+     * Overrides the AFK detection policy for one active match runtime without changing persistent arena config.
+     */
+    @Nonnull
+    default NexoriSetAfkDetectionPolicyResult setMatchAfkDetectionPolicy(
+        @Nonnull NexoriSetMatchAfkDetectionPolicyRequest request
+    ) {
+        return new NexoriSetAfkDetectionPolicyResult(
+            NexoriSetAfkDetectionPolicyStatus.NOT_SUPPORTED,
+            request == null ? "" : request.matchId(),
+            null,
+            request == null ? null : NexoriAfkDetectionPolicy.normalize(request.policy()),
+            "Runtime AFK policy overrides are not supported by this NexoriMinigameApi implementation."
+        );
+    }
+
+    /**
+     * Clears the AFK detection policy override for one active match runtime.
+     */
+    @Nonnull
+    default NexoriSetAfkDetectionPolicyResult clearMatchAfkDetectionPolicy(@Nonnull String matchId) {
+        return new NexoriSetAfkDetectionPolicyResult(
+            NexoriSetAfkDetectionPolicyStatus.NOT_SUPPORTED,
+            matchId,
+            null,
+            null,
+            "Runtime AFK policy overrides are not supported by this NexoriMinigameApi implementation."
+        );
+    }
+
+    /**
+     * Overrides the AFK detection policy for one player inside one active match runtime.
+     */
+    @Nonnull
+    default NexoriSetAfkDetectionPolicyResult setPlayerAfkDetectionPolicy(
+        @Nonnull NexoriSetPlayerAfkDetectionPolicyRequest request
+    ) {
+        return new NexoriSetAfkDetectionPolicyResult(
+            NexoriSetAfkDetectionPolicyStatus.NOT_SUPPORTED,
+            request == null ? "" : request.matchId(),
+            request == null ? null : request.playerUuid(),
+            request == null ? null : NexoriAfkDetectionPolicy.normalize(request.policy()),
+            "Runtime AFK policy overrides are not supported by this NexoriMinigameApi implementation."
+        );
+    }
+
+    /**
+     * Clears the AFK detection policy override for one player inside one active match runtime.
+     */
+    @Nonnull
+    default NexoriSetAfkDetectionPolicyResult clearPlayerAfkDetectionPolicy(
+        @Nonnull String matchId,
+        @Nonnull UUID playerUuid
+    ) {
+        return new NexoriSetAfkDetectionPolicyResult(
+            NexoriSetAfkDetectionPolicyStatus.NOT_SUPPORTED,
+            matchId,
+            playerUuid,
+            null,
+            "Runtime AFK policy overrides are not supported by this NexoriMinigameApi implementation."
+        );
+    }
+
+    /**
      * Finds the currently active Nexori match id for one player UUID.
      */
     @Nonnull

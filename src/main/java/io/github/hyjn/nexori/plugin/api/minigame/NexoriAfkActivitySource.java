@@ -7,5 +7,6 @@ public enum NexoriAfkActivitySource {
     UNKNOWN,
     IDLE_TIMEOUT,
     PLAYER_INPUT,
-    INVENTORY_PACKET
+    INVENTORY_PACKET,
+    POLICY_CHANGE
 }
