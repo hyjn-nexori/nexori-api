@@ -95,6 +95,34 @@ public interface NexoriMinigameApi {
     }
 
     /**
+     * Sets or clears the AFK state of one player inside one active match.
+     *
+     * <p>Nexori maintains a single public AFK state per player. Calling with {@code afk=true}
+     * marks the player as AFK; calling with {@code afk=false} marks the player as active and
+     * resets the idle timer so the built-in automatic detector does not re-trigger immediately.</p>
+     *
+     * <p>If Nexori's built-in AFK detection policy is still enabled for the match, player input
+     * and inventory activity can change this same AFK state normally. Minigames that want to own
+     * AFK detection completely should first disable the built-in policy via
+     * {@link #setMatchAfkDetectionPolicy(NexoriSetMatchAfkDetectionPolicyRequest)} or
+     * {@link #setPlayerAfkDetectionPolicy(NexoriSetPlayerAfkDetectionPolicyRequest)}, then use
+     * this method to report AFK state from their own game logic.</p>
+     *
+     * <p>Returns {@link NexoriSetPlayerAfkStatus#UNCHANGED} and dispatches no callback if the
+     * player was already in the requested state.</p>
+     */
+    @Nonnull
+    default NexoriSetPlayerAfkResult setPlayerAfk(@Nonnull NexoriSetPlayerAfkRequest request) {
+        return new NexoriSetPlayerAfkResult(
+            NexoriSetPlayerAfkStatus.NOT_SUPPORTED,
+            request == null ? "" : request.matchId(),
+            request == null ? null : request.playerUuid(),
+            request != null && request.afk(),
+            "External AFK control is not supported by this NexoriMinigameApi implementation."
+        );
+    }
+
+    /**
      * Finds the currently active Nexori match id for one player UUID.
      */
     @Nonnull
