@@ -19,6 +19,9 @@ public interface NexoriMatchLifecycleListener {
     default void onMatchPlacementCompleted(@Nonnull NexoriMatchLifecycleEvent event) {
     }
 
+    default void onMatchCancellationRequested(@Nonnull NexoriMatchLifecycleEvent event) {
+    }
+
     default void onMatchCompleted(@Nonnull NexoriMatchLifecycleEvent event) {
     }
 

@@ -6,5 +6,6 @@ package io.github.hyjn.nexori.plugin.api.minigame;
 public enum NexoriMatchResultPlayerOutcome {
     WIN,
     LOSS,
-    DISCONNECTED
+    DISCONNECTED,
+    NO_CONTEST
 }
