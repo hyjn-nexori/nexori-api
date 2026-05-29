@@ -9,11 +9,20 @@ import java.util.UUID;
  * still enabled for the match, player input can continue to change that same state. Minigames
  * that want full control over AFK detection should disable the built-in policy first via the
  * runtime AFK policy APIs, then use this request to report AFK state from their own logic.</p>
+ *
+ * <p>{@code showHud} controls whether the Nexori AFK HUD is shown to the player when
+ * {@code afk=true}. Set to {@code false} when the minigame handles its own AFK feedback
+ * and the Nexori overlay would be redundant or unwanted. Defaults to {@code true}.</p>
  */
 public record NexoriSetPlayerAfkRequest(
     String matchId,
     UUID playerUuid,
     boolean afk,
-    String reason
+    String reason,
+    boolean showHud
 ) {
+    /** Convenience constructor — {@code showHud} defaults to {@code true}. */
+    public NexoriSetPlayerAfkRequest(String matchId, UUID playerUuid, boolean afk, String reason) {
+        this(matchId, playerUuid, afk, reason, true);
+    }
 }
