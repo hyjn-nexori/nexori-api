@@ -13,6 +13,16 @@ public record NexoriActiveMatchInfo(
     String assignmentId,
     String externalMatchId,
     String rulesEngineId,
+    /**
+     * Legacy field kept only for compatibility.
+     * <p>
+     * Nexori no longer supports built-in match resolution triggers. The legacy value {@code "none"}
+     * is kept only for older mods that treated it as manual/external resolution. Use
+     * {@link #rulesEngineId()} to identify the external minigame/rules engine. External minigames
+     * should resolve matches through the public API. This member will be removed in a future API
+     * cleanup.
+     */
+    @Deprecated(forRemoval = true)
     String matchResolutionTriggerId,
     List<UUID> expectedPlayerUuids,
     List<UUID> arrivedPlayerUuids,
@@ -79,6 +89,22 @@ public record NexoriActiveMatchInfo(
         playerOutcomes = playerOutcomes == null || playerOutcomes.isEmpty()
             ? List.of()
             : List.copyOf(playerOutcomes);
+    }
+
+    /**
+     * Legacy field kept only for compatibility.
+     * <p>
+     * Nexori no longer supports built-in match resolution triggers. The legacy value {@code "none"}
+     * is kept only for older mods that treated it as manual/external resolution. Use
+     * {@link #rulesEngineId()} to identify the external minigame/rules engine. External minigames
+     * should resolve matches through the public API. This member will be removed in a future API
+     * cleanup.
+     *
+     * @return the legacy trigger id, normally {@code "none"} for compatibility.
+     */
+    @Deprecated(forRemoval = true)
+    public String matchResolutionTriggerId() {
+        return matchResolutionTriggerId;
     }
 
     private static List<UUID> copyUuids(List<UUID> rawUuids) {

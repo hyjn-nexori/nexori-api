@@ -236,9 +236,15 @@ public interface NexoriMinigameApi {
     Optional<NexoriMatchPlacementState> findMatchPlacementState(@Nonnull String matchId);
 
     /**
-     * Returns the active match resolution trigger id for one active match.
-     * When this returns "none", the match expects manual resolution from the third-party mod.
+     * Legacy field kept only for compatibility.
+     * <p>
+     * Nexori no longer supports built-in match resolution triggers. Active matches return the
+     * legacy value {@code "none"} only for older mods that treated it as manual/external
+     * resolution. Use {@code rulesEngineId} from match info/lifecycle events to identify the
+     * external minigame/rules engine. External minigames should resolve matches through the public
+     * API. This member will be removed in a future API cleanup.
      */
     @Nonnull
+    @Deprecated(forRemoval = true)
     Optional<String> findMatchResolutionTriggerId(@Nonnull String matchId);
 }
