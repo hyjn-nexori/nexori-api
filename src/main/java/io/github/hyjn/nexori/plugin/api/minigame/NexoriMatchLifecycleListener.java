@@ -19,6 +19,14 @@ public interface NexoriMatchLifecycleListener {
     default void onMatchPlacementCompleted(@Nonnull NexoriMatchLifecycleEvent event) {
     }
 
+    /**
+     * Called when Nexori allows gameplay to start for the match.
+     * This may happen after all expected initial players were placed, or after the initial
+     * placement window expires with at least the configured minimum initial players placed.
+     */
+    default void onMatchStartAllowed(@Nonnull NexoriMatchLifecycleEvent event) {
+    }
+
     default void onMatchCancellationRequested(@Nonnull NexoriMatchLifecycleEvent event) {
     }
 
