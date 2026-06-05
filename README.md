@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.github.hyjn-nexori:nexori-api:v2.4.0"
+    compileOnly "com.github.hyjn-nexori:nexori-api:v2.5.0"
 }
 ```
 
@@ -26,7 +26,7 @@ For local development against a checked-out copy:
 
 ```gradle
 dependencies {
-    compileOnly files("../nexori-api/build/libs/nexori-api-2.4.0.jar")
+    compileOnly files("../nexori-api/build/libs/nexori-api-2.5.0.jar")
 }
 ```
 
