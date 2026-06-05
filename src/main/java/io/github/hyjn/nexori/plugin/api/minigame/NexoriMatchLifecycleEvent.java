@@ -6,6 +6,27 @@ import java.util.UUID;
 
 /**
  * Immutable public snapshot for a Nexori match lifecycle event.
+ *
+ * <p>The event describes the match from Nexori's public point of view at the time the callback
+ * was dispatched. Rules mods should use {@link #rulesEngineId()} to confirm ownership and
+ * {@link #requiredResultPlayerUuids()} as part of final result preparation.</p>
+ *
+ * @param matchId Nexori's local match id.
+ * @param queueId queue id that produced the match, when known.
+ * @param arenaId arena id that owns the match, when known.
+ * @param assignmentId backend assignment id or local assignment id, when known.
+ * @param externalMatchId backend match id, when this match came from a backend assignment.
+ * @param rulesEngineId rules engine id that should control gameplay for this match.
+ * @param matchResolutionTriggerId legacy compatibility field; use {@code rulesEngineId} instead.
+ * @param expectedPlayerUuids players Nexori expected during the initial placement phase.
+ * @param arrivedPlayerUuids players that reached the arena runtime.
+ * @param activePlayerUuids players currently considered active in the match runtime.
+ * @param spectatorPlayerUuids players marked as logical spectators.
+ * @param requiredResultPlayerUuids official player set that must have outcomes before final result submission.
+ * @param placementState current initial placement/start gate snapshot.
+ * @param reason public reason associated with this lifecycle event.
+ * @param createdAtEpochMs match creation timestamp.
+ * @param eventAtEpochMs callback/event timestamp.
  */
 public record NexoriMatchLifecycleEvent(
     String matchId,

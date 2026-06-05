@@ -6,12 +6,23 @@ import java.util.UUID;
 
 /**
  * Public Nexori minigame integration surface intended for other mods.
- * This keeps external integrations away from internal runtime services while still exposing the supported hooks.
+ *
+ * <p>Third-party minigames compile against this API and call it at runtime through the installed
+ * Nexori plugin. The API exposes lifecycle callbacks, public match snapshots, player state
+ * operations, local AFK detection controls, result requirements, final result submission, and
+ * return-to-lobby commands.</p>
  */
 public interface NexoriMinigameApi {
 
     /**
      * Registers a listener for Nexori match lifecycle callbacks for one rules engine id.
+     *
+     * <p>The listener receives only callbacks for matches owned by the supplied rules engine id.
+     * Close the returned registration during mod shutdown or adapter cleanup.</p>
+     *
+     * @param rulesEngineId rules engine id owned by the caller.
+     * @param listener callback object.
+     * @return registration handle used to unregister the listener.
      */
     @Nonnull
     NexoriListenerRegistration registerMatchLifecycleListener(
@@ -21,6 +32,10 @@ public interface NexoriMinigameApi {
 
     /**
      * Registers a listener for Nexori AFK activity callbacks for one rules engine id.
+     *
+     * @param rulesEngineId rules engine id owned by the caller.
+     * @param listener callback object for local AFK transitions.
+     * @return registration handle used to unregister the listener.
      */
     @Nonnull
     default NexoriListenerRegistration registerAfkActivityListener(
@@ -33,6 +48,9 @@ public interface NexoriMinigameApi {
 
     /**
      * Overrides the AFK detection policy for one active match runtime without changing persistent arena config.
+     *
+     * @param request match policy override request.
+     * @return result describing whether the override was stored.
      */
     @Nonnull
     default NexoriSetAfkDetectionPolicyResult setMatchAfkDetectionPolicy(
@@ -49,6 +67,9 @@ public interface NexoriMinigameApi {
 
     /**
      * Clears the AFK detection policy override for one active match runtime.
+     *
+     * @param matchId Nexori local match id.
+     * @return result describing whether the override was cleared.
      */
     @Nonnull
     default NexoriSetAfkDetectionPolicyResult clearMatchAfkDetectionPolicy(@Nonnull String matchId) {
@@ -63,6 +84,9 @@ public interface NexoriMinigameApi {
 
     /**
      * Overrides the AFK detection policy for one player inside one active match runtime.
+     *
+     * @param request player policy override request.
+     * @return result describing whether the override was stored.
      */
     @Nonnull
     default NexoriSetAfkDetectionPolicyResult setPlayerAfkDetectionPolicy(
@@ -79,6 +103,10 @@ public interface NexoriMinigameApi {
 
     /**
      * Clears the AFK detection policy override for one player inside one active match runtime.
+     *
+     * @param matchId Nexori local match id.
+     * @param playerUuid player whose override should be cleared.
+     * @return result describing whether the override was cleared.
      */
     @Nonnull
     default NexoriSetAfkDetectionPolicyResult clearPlayerAfkDetectionPolicy(
@@ -123,48 +151,54 @@ public interface NexoriMinigameApi {
     }
 
     /**
-     * Returns the backend AFK continuation decision for one active match.
-     *
-     * <p>Returns {@link NexoriAfkContinuationDecisionType#PENDING} while a backend check is in
-     * flight, {@link NexoriAfkContinuationDecisionType#CONTINUE} or
-     * {@link NexoriAfkContinuationDecisionType#CANCEL} once the backend responds, or
-     * {@link NexoriAfkContinuationDecisionType#UNAVAILABLE} if the feature is disabled,
-     * the backend is not configured, or the most recent request failed.</p>
-     *
-     * <p>A {@link NexoriAfkContinuationDecisionType#CANCEL} decision is sticky for the match
-     * lifetime: subsequent backend {@code CONTINUE} responses do not overwrite it.</p>
-     */
-    @Nonnull
-    default NexoriAfkContinuationDecision getAfkContinuationDecision(@Nonnull String matchId) {
-        return NexoriAfkContinuationDecision.unavailable(matchId == null ? "" : matchId);
-    }
-
-    /**
      * Finds the currently active Nexori match id for one player UUID.
+     *
+     * @param playerUuid player to look up.
+     * @return active match id, or empty when the player is not in a Nexori active match.
      */
     @Nonnull
     Optional<String> findActiveMatchId(@Nonnull UUID playerUuid);
 
     /**
      * Finds an active player in one match by UUID string or by current username.
+     *
+     * @param matchId Nexori local match id.
+     * @param playerToken player UUID string or current username.
+     * @return matching active player UUID, or empty when no active player matches.
      */
     @Nonnull
     Optional<UUID> findActivePlayerUuid(@Nonnull String matchId, @Nonnull String playerToken);
 
     /**
      * Returns the public runtime snapshot for one active match.
+     *
+     * @param matchId Nexori local match id.
+     * @return public active match snapshot, or empty when the match is missing.
      */
     @Nonnull
     Optional<NexoriActiveMatchInfo> findActiveMatchInfo(@Nonnull String matchId);
 
     /**
      * Returns the rules engine id that should control one active manual/custom match.
+     *
+     * @param matchId Nexori local match id.
+     * @return controlling rules engine id, or empty when unavailable.
      */
     @Nonnull
     Optional<String> findRulesEngineId(@Nonnull String matchId);
 
     /**
      * Stores or replaces one player's accumulated outcome inside the active match runtime.
+     *
+     * <p>Call this before submitting the final result. All players from
+     * {@link #findMatchResultRequirements(String)} {@code requiredPlayerUuids} must have outcomes
+     * before local match completion can be accepted.</p>
+     *
+     * @param matchId Nexori local match id.
+     * @param playerUuid player receiving the outcome.
+     * @param outcome final outcome to store for the player.
+     * @param reason short public reason for diagnostics.
+     * @return result describing whether the outcome was stored.
      */
     @Nonnull
     NexoriSetPlayerOutcomeResult setPlayerOutcome(
@@ -176,6 +210,12 @@ public interface NexoriMinigameApi {
 
     /**
      * Stores logical spectator state for one player inside the active match runtime.
+     *
+     * @param matchId Nexori local match id.
+     * @param playerUuid player whose spectator state should change.
+     * @param spectator whether the player should be treated as a spectator.
+     * @param reason short public reason for diagnostics.
+     * @return result describing whether the spectator state was stored.
      */
     @Nonnull
     NexoriSetPlayerSpectatorResult setPlayerSpectator(
@@ -188,6 +228,13 @@ public interface NexoriMinigameApi {
     /**
      * Stores logical spectator state and optionally applies a temporary spectator model while the player is online.
      * Blank or unknown model ids do not change the logical spectator outcome.
+     *
+     * @param matchId Nexori local match id.
+     * @param playerUuid player whose spectator state should change.
+     * @param spectator whether the player should be treated as a spectator.
+     * @param reason short public reason for diagnostics.
+     * @param spectatorModelId optional runtime model id to apply while the player is online.
+     * @return result describing whether the spectator state was stored.
      */
     @Nonnull
     default NexoriSetPlayerSpectatorResult setPlayerSpectator(
@@ -202,6 +249,12 @@ public interface NexoriMinigameApi {
 
     /**
      * Schedules one player for Nexori's return-to-lobby flow without changing their outcome.
+     *
+     * @param matchId Nexori local match id.
+     * @param playerUuid player to return.
+     * @param delaySeconds delay before return; implementations validate the supported range.
+     * @param reason short public reason for diagnostics.
+     * @return result describing whether the return was scheduled.
      */
     @Nonnull
     NexoriReturnPlayerResult returnPlayerToLobby(
@@ -213,24 +266,42 @@ public interface NexoriMinigameApi {
 
     /**
      * Returns the complete player set a rules mod must include when submitting a match result.
+     *
+     * <p>{@link NexoriMatchResultRequirements#requiredPlayerUuids()} is the official result
+     * requirement set for the match. Use it as the source of truth for final outcomes.</p>
+     *
+     * @param matchId Nexori local match id.
+     * @return result requirements, or empty when the match is missing.
      */
     @Nonnull
     Optional<NexoriMatchResultRequirements> findMatchResultRequirements(@Nonnull String matchId);
 
     /**
      * Completes one match using accumulated player outcomes and optionally queues a backend result report when configured.
+     *
+     * <p>{@code matchStatus} in the returned result describes local acceptance by Nexori.
+     * {@code backendReportStatus} describes only backend result transport.</p>
+     *
+     * @param request final result request.
+     * @return local completion and backend reporting status.
      */
     @Nonnull
     NexoriSubmitFinalMatchResultResult submitFinalMatchResult(@Nonnull NexoriSubmitFinalMatchResultRequest request);
 
     /**
      * Explicitly closes backend admission reporting for one active backend-driven match.
+     *
+     * @param request close admission request.
+     * @return result describing whether admission changed locally.
      */
     @Nonnull
     NexoriCloseMatchAdmissionResult closeMatchAdmission(@Nonnull NexoriCloseMatchAdmissionRequest request);
 
     /**
      * Returns the state of Nexori's initial player placement phase for one active match.
+     *
+     * @param matchId Nexori local match id.
+     * @return placement/start gate state, or empty when the match is missing.
      */
     @Nonnull
     Optional<NexoriMatchPlacementState> findMatchPlacementState(@Nonnull String matchId);
@@ -243,6 +314,9 @@ public interface NexoriMinigameApi {
      * resolution. Use {@code rulesEngineId} from match info/lifecycle events to identify the
      * external minigame/rules engine. External minigames should resolve matches through the public
      * API. This member will be removed in a future API cleanup.
+     *
+     * @param matchId Nexori local match id.
+     * @return legacy resolution trigger id, normally {@code "none"}, or empty when unavailable.
      */
     @Nonnull
     @Deprecated(forRemoval = true)

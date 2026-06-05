@@ -5,6 +5,13 @@ import java.util.UUID;
 
 /**
  * Immutable public snapshot for a player-scoped Nexori match lifecycle event.
+ *
+ * @param match match-level lifecycle snapshot.
+ * @param playerUuid player associated with this event.
+ * @param playerName player name known by Nexori at event time.
+ * @param playerAssignmentId backend player assignment id, when known.
+ * @param reason public reason associated with this player event.
+ * @param eventAtEpochMs event timestamp.
  */
 public record NexoriPlayerMatchLifecycleEvent(
     NexoriMatchLifecycleEvent match,

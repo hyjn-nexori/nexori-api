@@ -4,6 +4,13 @@ import javax.annotation.Nonnull;
 
 /**
  * Immutable public snapshot for an individual player placement lifecycle event.
+ *
+ * @param player player-scoped lifecycle snapshot.
+ * @param placementOutcome placement outcome Nexori recorded for the player.
+ * @param placementState match placement/start gate snapshot after this player's placement event.
+ * @param worldName world name used for placement, when known.
+ * @param instanceTemplateId instance template id used for placement, when known.
+ * @param eventAtEpochMs event timestamp.
  */
 public record NexoriPlayerPlacementLifecycleEvent(
     NexoriPlayerMatchLifecycleEvent player,

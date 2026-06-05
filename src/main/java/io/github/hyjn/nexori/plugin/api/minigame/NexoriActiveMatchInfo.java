@@ -4,7 +4,29 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Public runtime snapshot for one active Nexori match.
+ * Public runtime snapshot for one Nexori-managed match.
+ *
+ * <p>Use this as a read-only view of the match state Nexori exposes to a rules mod. Lists are
+ * normalized by Nexori and should not be mutated by callers.</p>
+ *
+ * @param matchId Nexori's local match id.
+ * @param queueId queue id that produced the match, when known.
+ * @param arenaId arena id that owns the match, when known.
+ * @param assignmentId backend assignment id or local assignment id, when known.
+ * @param externalMatchId backend match id, when this match came from a backend assignment.
+ * @param rulesEngineId rules engine id that should control gameplay for this match.
+ * @param matchResolutionTriggerId legacy compatibility field; use {@code rulesEngineId} instead.
+ * @param expectedPlayerUuids players Nexori expected during the initial placement phase.
+ * @param arrivedPlayerUuids players that reached the arena runtime.
+ * @param activePlayerUuids players currently considered active in the match runtime.
+ * @param eliminatedPlayerUuids players no longer active because Nexori recorded an outcome.
+ * @param spectatorPlayerUuids players marked as logical spectators.
+ * @param afkPlayerUuids players currently marked AFK by Nexori's local AFK runtime state.
+ * @param requiredResultPlayerUuids official player set that must have outcomes before final result submission.
+ * @param playerOutcomes outcome state currently stored by rules mod calls.
+ * @param expectedPlayerCount expected initial player count.
+ * @param completedAtEpochMs completion timestamp, or {@code 0} while incomplete.
+ * @param resultSubmittedAtEpochMs final result submission timestamp, or {@code 0} before submission.
  */
 public record NexoriActiveMatchInfo(
     String matchId,

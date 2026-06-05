@@ -13,6 +13,12 @@ import java.util.UUID;
  * <p>{@code showHud} controls whether the Nexori AFK HUD is shown to the player when
  * {@code afk=true}. Set to {@code false} when the minigame handles its own AFK feedback
  * and the Nexori overlay would be redundant or unwanted. Defaults to {@code true}.</p>
+ *
+ * @param matchId Nexori local match id.
+ * @param playerUuid player whose AFK state should change.
+ * @param afk {@code true} to mark AFK; {@code false} to mark active.
+ * @param reason short public reason for diagnostics.
+ * @param showHud whether Nexori should show its AFK HUD when marking the player AFK.
  */
 public record NexoriSetPlayerAfkRequest(
     String matchId,

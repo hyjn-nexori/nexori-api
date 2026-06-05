@@ -2,9 +2,24 @@ package io.github.hyjn.nexori.plugin.api.minigame;
 
 /**
  * Public snapshot of Nexori's initial placement and start-gate state for one active match.
- * {@code placementComplete} means every expected initial player was placed. {@code startGateOpen}
- * means gameplay may start; that can happen with a partial initial roster after the configured
- * placement window expires and {@code minimumInitialPlayers} has been met.
+ *
+ * <p>{@code placementComplete} means every expected initial player was placed.
+ * {@code startGateOpen} means gameplay may start; that can happen with a partial initial roster
+ * after the configured placement window expires and {@code minimumInitialPlayers} has been met.</p>
+ *
+ * @param expectedPlayers expected initial players.
+ * @param arrivedPlayers expected players that arrived at the arena runtime.
+ * @param placedPlayers expected players with confirmed or fallback placement.
+ * @param placementComplete whether every expected initial player has placement recorded.
+ * @param minimumInitialPlayers minimum placed player count required to open the start gate.
+ * @param initialPlacementWindowOpen whether the initial placement window is still open.
+ * @param initialPlacementWindowStartedAtEpochMs placement window start timestamp, or {@code 0}.
+ * @param initialPlacementWindowExpiresAtEpochMs placement window expiry timestamp, or {@code 0}.
+ * @param initialPlacementWindowClosedAtEpochMs placement window close timestamp, or {@code 0}.
+ * @param initialPlacementWindowCloseReason public reason the placement window closed.
+ * @param startGateOpen whether rules mods may start normal gameplay.
+ * @param startGateOpenedAtEpochMs start gate open timestamp, or {@code 0}.
+ * @param startGateOpenReason public reason the start gate opened.
  */
 public record NexoriMatchPlacementState(
     int expectedPlayers,

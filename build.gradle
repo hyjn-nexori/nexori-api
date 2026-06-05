@@ -23,6 +23,7 @@ dependencies {
 
 javadoc {
     options.addStringOption('Xdoclint:-missing', '-quiet')
+    options.addStringOption('-add-stylesheet', file('src/docs/javadoc/nexori-javadoc.css').absolutePath)
 }
 
 publishing {
